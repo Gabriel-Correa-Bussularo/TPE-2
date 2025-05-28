@@ -1,92 +1,101 @@
 #include <stdio.h>   
-#include <stdlib.h>  // biblioteca para usar o rand e srand
-#include <time.h>    // biblioteca para usar o time
+#include <stdlib.h>  
+#include <time.h>    
 
-#define N 1000  //constante de 1000 posições
+#define TAM 1000  // Tamanho do vetor
 
-// gera números aleatórios até 9999
-void Num_Randon(int vetor[]) {
-    for (int i = 0; i < N; i++) {
-        vetor[i] = rand() % 10000;
+// Preenche o vetor com valores aleatórios
+void gerar_numeros(int vet[]) {
+    for (int i = 0; i < TAM; i++) {
+        vet[i] = rand() % 10000;  // Números entre 0 e 9999
     }
 }
 
-// Função que copia um vetor para outro
-void copia_vetor(int destino[], int origem[]) {
-    for (int i = 0; i < N; i++) {
-        destino[i] = origem[i];
+// Copia os dados de um vetor para outro
+void copiar_vetor(int dest[], int orig[]) {
+    for (int i = 0; i < TAM; i++) {
+        dest[i] = orig[i];
     }
 }
 
 // Função que imprime os 10 primeiros e os 10 últimos elementos de um vetor
-void Printf_vetor(char titulo[], int vetor[]) {
-    printf("%s\n", titulo);  
-    printf("Primeiros 10: ");
-    for (int i = 0; i < 10; i++) printf("%d ", vetor[i]);  // Imprime os 10 primeiros
-    printf("\nÚltimos 10:  ");
-    for (int i = N - 10; i < N; i++) printf("%d ", vetor[i]);  // Imprime os 10 últimos
+void mostrar_vetor(char nome[], int vet[]) {
+    printf("%s\n", nome);  
+    
+    printf("Início: ");
+    for (int i = 0; i < 10; i++) {
+        printf("%d ", vet[i]);
+    }
+    
+    printf("\nFinal:  ");
+    for (int i = TAM - 10; i < TAM; i++) {
+        printf("%d ", vet[i]);
+    }
     printf("\n\n");
 }
 
-// Algoritmo de ordenação Bubble Sort
-// Ele organiza o vetor de forma crescente ou decrescente dependendo do parâmetro
-void bubble_sort(int vetor[], int crescente) {
-    for (int i = 0; i < N - 1; i++) {
-        for (int j = 0; j < N - 1 - i; j++) {
-            // Se for crescente, compara se o valor atual é maior que o próximo
-            // Se for decrescente, compara se o atual é menor que o próximo
-            int cond = crescente ? (vetor[j] > vetor[j+1]) : (vetor[j] < vetor[j+1]);
-            if (cond) {
-                // Troca os valores de posição se estiverem fora da ordem 
-                int tmp = vetor[j];
-                vetor[j] = vetor[j+1];
-                vetor[j+1] = tmp;
+// Ordenação por trocas (Bubble Sort)
+void ordenar_bolha(int vet[], int ordem) {
+    int temp;
+    for (int passo = 0; passo < TAM - 1; passo++) {
+        for (int i = 0; i < TAM - 1 - passo; i++) {
+            // Verifica a ordem desejada
+            if ((ordem && vet[i] > vet[i+1]) || (!ordem && vet[i] < vet[i+1])) {
+                // Faz a troca
+                temp = vet[i];
+                vet[i] = vet[i+1];
+                vet[i+1] = temp;
             }
         }
     }
 }
 
-// Algoritmo de ordenação Insertion Sort
-// Também pode ordenar de forma crescente ou decrescente
-void insertion_sort(int v[], int crescente) {
-    for (int i = 1; i < N; i++) {
-        int chave = v[i];  // Armazena o valor atual
-        int j = i - 1;
-        // Move os elementos maiores ou menores para frente até achar a posição correta
-        while (j >= 0 && (crescente ? v[j] > chave : v[j] < chave)) {
-            v[j + 1] = v[j];
+// Ordenação por inserção
+void ordenar_insercao(int vet[], int ordem) {
+    int atual, j;
+    for (int i = 1; i < TAM; i++) {
+        atual = vet[i];
+        j = i - 1;
+        
+        // Encontra a posição correta
+        while (j >= 0 && ((ordem && vet[j] > atual) || (!ordem && vet[j] < atual))) {
+            vet[j + 1] = vet[j];
             j--;
         }
-        v[j + 1] = chave;  // Insere o valor na posição correta
+        vet[j + 1] = atual;
     }
 }
 
 int main() {
-    // Declaramos o vetor original e 4 cópias para cada tipo de ordenação
-    int original[N], bCresc[N], bDecresc[N], iCresc[N], iDecresc[N];
-
-    srand(time(NULL));  // time para gerar números diferentes a cada teste
-
-    Num_Randon(original);  // Geramos os 1000 números aleatórios no vetor original
-
-    // Copiamos o vetor original para os outros vetores antes de ordenar
-    copia_vetor(bCresc, original);
-    copia_vetor(bDecresc, original);
-    copia_vetor(iCresc, original);
-    copia_vetor(iDecresc, original);
-
-    // algoritmos de ordenação
-    bubble_sort(bCresc, 1);     // crescente Bubble Sort
-    bubble_sort(bDecresc, 0);   // decrescente Bubble Sort
-    insertion_sort(iCresc, 1);  // crescente Insertion Sort
-    insertion_sort(iDecresc, 0); // decrescente Insertion Sort
-
-    // printf dos 10 primeiros e últimos
-    Printf_vetor("Vetor Original:", original);
-    Printf_vetor("Bubble Sort - Crescente:", bCresc);
-    Printf_vetor("Bubble Sort - Decrescente:", bDecresc);
-    Printf_vetor("Insertion Sort - Crescente:", iCresc);
-    Printf_vetor("Insertion Sort - Decrescente:", iDecresc);
+    int original[TAM];  // Vetor original
+    int bolha_cres[TAM], bolha_decres[TAM];  // Para bubble sort
+    int insercao_cres[TAM], insercao_decres[TAM];  // Para insertion sort
+    
+    // Inicializa o gerador de números aleatórios
+    srand(time(0));
+    
+    // Gera os números
+    gerar_numeros(original);
+    
+    // Faz cópias para cada ordenação
+    copiar_vetor(bolha_cres, original);
+    copiar_vetor(bolha_decres, original);
+    copiar_vetor(insercao_cres, original);
+    copiar_vetor(insercao_decres, original);
+    
+    // Executa as ordenações
+    ordenar_bolha(bolha_cres, 1);    // Crescente
+    ordenar_bolha(bolha_decres, 0);  // Decrescente
+    
+    ordenar_insercao(insercao_cres, 1);    // Crescente
+    ordenar_insercao(insercao_decres, 0);  // Decrescente
+    
+    // Mostra os resultados
+    mostrar_vetor("Vetor original:", original);
+    mostrar_vetor("Bubble Sort (crescente):", bolha_cres);
+    mostrar_vetor("Bubble Sort (decrescente):", bolha_decres);
+    mostrar_vetor("Insertion Sort (crescente):", insercao_cres);
+    mostrar_vetor("Insertion Sort (decrescente):", insercao_decres);
 
     return 0;
 }
